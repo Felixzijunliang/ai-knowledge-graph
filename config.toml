@@ -1,28 +1,32 @@
 [llm]
-model = "gemma3"
-#model = "claude-3.5-sonnet-v2"
-#model = "gpt4o"
-#model = "llama3-2-90b-instruct-v1:0"
-api_key = "sk-1234"
+# 推荐的中文处理模型，选择其中一个：
+# model = "qwen2.5:7b"        # 阿里通义千问，中文效果好
+# model = "llama3.1:8b"       # Meta LLaMA，英文和中文都不错
+# model = "gemma2:9b"         # Google Gemma，轻量级
+model = "qwen3:14b"           # 阿里通义千问3 14B，中文效果更好，推理能力强，当前使用
+
+# Ollama 不需要真实的 API key，但需要设置一个占位符
+api_key = "ollama-local"
+
+# Ollama 的标准 API 端点
 base_url = "http://localhost:11434/v1/chat/completions"
-#base_url = "http://localhost:4000/v1/chat/completions"
-max_tokens = 8192
-#max_tokens = 4096
-temperature = 0.8
+
+# 针对qwen3:14b优化的参数设置
+max_tokens = 8192          # qwen3:14b支持更长的上下文，增大token限制
+
+# 降低温度以获得更一致的结果，qwen3对温度参数比较敏感
+temperature = 0.1
 
 [chunking]
-chunk_size = 100  # Number of words per chunk
-overlap = 20      # Number of words to overlap between chunks
+# 对于中文文档，适当调整块大小，qwen3:14b可以处理更长的文本
+chunk_size = 200  # 增大块大小，利用qwen3更强的上下文理解能力
+overlap = 25      # 相应增加重叠以保持连贯性
 
 [standardization]
-enabled = true             # Whether to enable entity standardization
-use_llm_for_entities = true  # Whether to use LLM for additional entity resolution
+enabled = true            # 启用实体标准化，对中文特别重要
+use_llm_for_entities = true  # 使用LLM进行实体解析，qwen3在此方面表现很好
 
 [inference]
-enabled = true             # Whether to enable relationship inference
-use_llm_for_inference = true  # Whether to use LLM for relationship inference
-apply_transitive = true    # Whether to apply transitive inference rules
-
-[visualization]
-edge_smooth = false  # Options: false, "dynamic", "continuous", "discrete", "diagonalCross", 
-                         # "straightCross", "horizontal", "vertical", "curvedCW", "curvedCCW", "cubicBezier": true = "continuous"
+enabled = true             # 启用关系推理
+use_llm_for_inference = true  # 使用LLM进行关系推理，qwen3推理能力强
+apply_transitive = true    # 应用传递推理规则
